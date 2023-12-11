@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'consolas', sans-serif;
+        }
+
+        body {
+            overflow-x: hidden;
+            color: #fff;
+            min-height: 100vh;
+            background: linear-gradient(90deg, rgb(0, 0, 80), rgb(95, 0, 0));
+            text-align: center;
+        }
+
+        header {
+            padding: 20px;
+            font-size: 25px;
+            background: linear-gradient(to right, #000000, #0500315d, #000);
+            border-radius: 10px;
+            animation: glow 2s infinite;
+        }
+
+        h2 {
+            padding: 0px;
+            background: linear-gradient(to right, #7c0000, #0d0083);
+        }
+
+        .conversion-section {
+            margin-top: 20px;
+            display: inline-block;
+            text-align: center;
+            width: 45%;
+            vertical-align: top;
+            padding: 10px;
+            background: linear-gradient(to right, #7c0000, #0d0083);
+            border-radius: 20px;
+            animation: glow 2s infinite;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        input {
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background: linear-gradient(to right, #580000, #580000);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        button:hover {
+            background-color: rgb(104, 179, 250);
+            box-shadow: 0 0 50px rgba(7, 0, 104, 0.8);
+            cursor: pointer;
+            border: none;
+            border-radius: 50px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        p {
+            font-weight: bold;
+            margin-top: 10px;
+            color: #fff;
+        }
+
+        a {
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            margin-top: 20px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(255, 90, 90, 0.8);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(0, 209, 209, 0.3);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h2>Conversion</h2>
+    </header>
+
+    <section>
+        <div class="conversion-section">
+            <form>
+                <label for="conversionType">Choose Conversion Type:</label>
+                <select id="conversionType" onchange="updateUnits()">
+                    <option value="temperature">Temperature</option>
+                    <option value="length">Length</option>
+                </select><br><br>
+
+                <label for="inputValue">Enter Value:</label>
+                <input type="number" id="inputValue" placeholder="Enter"><br><br>
+
+                <label for="unitFrom">From Unit:</label>
+                <select id="unitFrom"></select><br><br>
+
+                <label for="unitTo">To Unit:</label>
+                <select id="unitTo"></select><br><br>
+
+                <button type="button" onclick="convert()">Convert</button><br><br>
+
+                <p id="result"></p>
+            </form>
+        </div>
+    </section>
+
+    <a href="Homepage.html">Back to Main</a>
+
+    <script>
+        function updateUnits() {
+            var conversionType = document.getElementById("conversionType").value;
+            var unitFrom = document.getElementById("unitFrom");
+            var unitTo = document.getElementById("unitTo");
+
+            unitFrom.innerHTML = "";
+            unitTo.innerHTML = "";
+
+            if (conversionType === 'temperature') {
+                addOption(unitFrom, 'Celsius', 'C');
+                addOption(unitFrom, 'Fahrenheit', 'F');
+                addOption(unitTo, 'Celsius', 'C');
+                addOption(unitTo, 'Fahrenheit', 'F');
+            } else if (conversionType === 'length') {
+                addOption(unitFrom, 'Feet', 'ft');
+                addOption(unitFrom, 'Meters', 'm');
+                addOption(unitTo, 'Feet', 'ft');
+                addOption(unitTo, 'Meters', 'm');
+            }
+        }
+
+        function addOption(selectElement, label, value) {
+            var option = document.createElement("option");
+            option.text = label;
+            option.value = value;
+            selectElement.add(option);
+        }
+
+        function convert() {
+            var conversionType = document.getElementById("conversionType").value;
+            var inputValue = parseFloat(document.getElementById("inputValue").value);
+            var unitFrom = document.getElementById("unitFrom").value;
+            var unitTo = document.getElementById("unitTo").value;
+            var result;
+
+            if (conversionType === 'temperature') {
+                result = convertTemperature(inputValue, unitFrom, unitTo);
+                document.getElementById("result").innerHTML = result.toFixed(2) + " °" + unitTo;
+            } else if (conversionType === 'length') {
+                result = convertLength(inputValue, unitFrom, unitTo);
+                document.getElementById("result").innerHTML = result.toFixed(4) + " " + unitTo;
+            }
+        }
+
+        function convertTemperature(value, from, to) {
+            if (from === 'C' && to === 'F') {
+                return (value * 9 / 5) + 32;
+            } else if (from === 'F' && to === 'C') {
+                return (value - 32) * 5 / 9;
+            }
+            return value;
+        }
+
+        function convertLength(value, from, to) {
+            if (from === 'ft' && to === 'm') {
+                return value * 0.3048;
+            } else if (from === 'm' && to === 'ft') {
+                return value / 0.3048;
+            }
+            return value;
+        }
+
+        updateUnits();
+    </script>
+</body>
+
+</html>
