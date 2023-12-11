@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Income Tax</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(90deg, rgb(0, 0, 80), rgb(95, 0, 0));
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            justify-content: space-between;
+        }
+
+        h2 {
+            padding: 20px;
+            font-size: 25px;
+            background: linear-gradient(to right, #000000, #0500315d, #000);
+            border-radius: 20px;
+            animation: glow 2s infinite;
+        }
+
+        form {
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        input {
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 5px;
+            width: calc(100% - 20px);
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background: rgba(83, 0, 0, 0.9);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: rgba(16, 0, 109, 0.8);
+            box-shadow: 0 0 20px rgba(8, 0, 117, 0.9); 
+        }
+
+        .output {
+            margin-top: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .output p {
+            font-weight: bold;
+            margin: 5px 0;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        a {
+            color: #fff;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Income Tax</h2>
+    <form>
+        <label for="income">Annual income:</label>
+        <input type="number" id="income" placeholder="Enter Annual Income">
+        <button type="button" id="incomelevel">Calculate tax</button>
+        <div class="output">
+            <p id="beforetax"></p>
+            <p id="tax"></p>
+            <p id="aftertax"></p>
+        </div>
+    </form>
+
+    <a href="Homepage.html">Back to Main</a>
+
+    <script>
+        document.getElementById("incomelevel").addEventListener("click", function () {
+            var income = parseFloat(document.getElementById("income").value);
+
+            if (isNaN(income) || income < 0) {
+                alert("Please enter a valid annual income");
+                return;
+            }
+
+            var beforeTax = "Taxable Income: ₱" + income.toFixed(2);
+            var tax, afterTax;
+
+            if (income <= 250000) {
+                tax = 0;
+                afterTax = income;
+            } else if (income <= 400000) {
+                tax = (income - 250000) * 0.20;
+                afterTax = income - tax;
+            } else if (income <= 800000) {
+                tax = (income - 400000) * 0.25 + 30000;
+                afterTax = income - tax;
+            } else if (income <= 2000000) {
+                tax = (income - 800000) * 0.30 + 130000;
+                afterTax = income - tax;
+            } else if (income <= 8000000) {
+                tax = (income - 2000000) * 0.32 + 490000;
+                afterTax = income - tax;
+            } else {
+                tax = (income - 8000000) * 0.35 + 2410000;
+                afterTax = income - tax;
+            }
+
+            document.getElementById("beforetax").innerText = beforeTax;
+            document.getElementById("tax").innerText = "Tax: ₱" + tax.toFixed(2);
+            document.getElementById("aftertax").innerText = "Income after tax: ₱" + afterTax.toFixed(2);
+        });
+    </script>
+</body>
+</html>
