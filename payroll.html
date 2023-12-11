@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Payroll</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'consolas', sans-serif;
+        }
+
+        body {
+            overflow-x: hidden;
+            color: #fff;
+            min-height: 100vh;
+            background: linear-gradient(90deg, rgb(0, 0, 80), rgb(95, 0, 0));
+            text-align: center;
+        }
+
+        header {
+            padding: 20px;
+            font-size: 25px;
+            background: linear-gradient(to right, #000000, #0500315d, #000);
+            border-radius: 10px;
+            animation: glow 2s infinite;
+        }
+
+        h2 {
+            padding: 0px;
+            background: linear-gradient(to right, #7c0000, #0d0083);
+        }
+
+
+        #mainContainer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        #employeeForm,
+        #payrollTable {
+            width: 48%;
+        }
+
+        form {
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        input {
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 5px;
+            width: calc(100% - 20px);
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background: rgba(83, 0, 0, 0.9);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: rgba(16, 0, 109, 0.8);
+            box-shadow: 0 0 20px rgba(8, 0, 117, 0.9);
+        }
+
+        #payrollTableContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #fff;
+            padding: 8px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .currency {
+            text-align: left;
+        }
+
+        .initial-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .initial-list h3 {
+            margin-bottom: 10px;
+        }
+
+        .initial-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .initial-list li {
+            margin: 5px 0;
+        }
+
+        #deleteForm {
+            margin-top: 20px;
+            width: 80%;
+        }
+
+        #deleteForm input {
+            width: calc(100% - 20px);
+        }
+
+        #deleteEmployee {
+            width: 100%;
+        }
+
+        #backToMain {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+            color: white;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        #confirmationModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #410101;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+            border-radius: 10px;
+        }
+
+        #confirmationModal p {
+            margin: 10px 0;
+        }
+
+        #confirmDelete,
+        #cancelDelete {
+            padding: 10px;
+            background: linear-gradient(to right, #001a33, #000);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            margin-right: 10px;
+            width: 45%;
+        }
+
+        #confirmDelete:hover,
+        #cancelDelete:hover {
+            background-color: rgba(16, 0, 109, 0.8);
+            box-shadow: 0 0 20px rgba(8, 0, 117, 0.9);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+    <h2>Payroll</h2>
+    </header>
+    <div id="mainContainer">
+        <div id="employeeForm">
+            <form id="payrollForm">
+                <label for="employeeName">Employee Name:</label>
+                <input type="text" id="employeeName" required><br>
+
+                <label for="daysWorked">Days Worked:</label>
+                <input type="number" id="daysWorked" required><br>
+
+                <label for="dailyRate">Daily Rate:</label>
+                <input type="number" id="dailyRate" required><br>
+
+                <label for="deductionAmount">Deduction Amount:</label>
+                <input type="number" id="deductionAmount" required><br>
+
+                <button type="button" id="addEmployee">Add Employee</button>
+                <form id="deleteForm">
+                    <label for="lineNumber">Enter Line Number to Delete:</label>
+                    <input type="number" id="lineNumber">
+                    <button type="button" id="deleteEmployee">Delete Employee</button>
+                </form>
+            </form>
+        </div>
+
+        <div id="payrollTableContainer">
+            <div id="payrollTable" class="initial-list">
+                <h3>List</h3>
+                 <table>
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Employee Name</th>
+                            <th>Days Worked</th>
+                            <th>Daily Rate</th>
+                            <th>Gross Pay</th>
+                            <th>Deduction Amount</th>
+                            <th>Net Pay</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <a id="backToMain" href="Homepage.html">Back to Main</a>
+
+    <div id="overlay"></div>
+    <div id="confirmationModal">
+        <p>Are you sure you want to delete this employee?</p>
+        <button id="confirmDelete">Yes</button>
+        <button id="cancelDelete">No</button>
+    </div>
+
+    <script>
+
+        let payrollList = [];
+
+        function calculatePay(daysWorked, dailyRate, deductionAmount) {
+            const grossPay = daysWorked * dailyRate;
+            const netPay = grossPay - deductionAmount;
+            return {
+                grossPay,
+                netPay
+            };
+        }
+
+        function displayPayrollTable() {
+            const tableDiv = document.getElementById('payrollTable');
+            tableDiv.innerHTML = "<h3>List</h3>";
+            const table = document.createElement('table');
+
+            const headerRow = table.insertRow(0);
+            headerRow.innerHTML =
+                "<th>No.</th><th>Employee Name</th><th>Days Worked</th><th>Daily Rate</th><th>Gross Pay</th><th>Deduction Amount</th><th>Net Pay</th>";
+
+            payrollList.forEach((employee, index) => {
+                const {
+                    daysWorked,
+                    dailyRate,
+                    deductionAmount
+                } = employee;
+                const {
+                    grossPay,
+                    netPay
+                } = calculatePay(daysWorked, dailyRate, deductionAmount);
+
+                const row = table.insertRow(index + 1);
+                row.innerHTML = `<td>${index + 1}</td><td>${employee.name}</td>
+            <td>${daysWorked}</td><td>${dailyRate}</td><td class="currency">₱${grossPay}</td>
+            <td class="currency">₱${deductionAmount}</td><td class="currency">₱${netPay}</td>`;
+            });
+
+            tableDiv.appendChild(table);
+        }
+
+        function openModal() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('confirmationModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('confirmationModal').style.display = 'none';
+        }
+
+        document.getElementById("addEmployee").addEventListener("click",
+            function addEmployee() {
+                const name = document.getElementById('employeeName').value;
+                const daysWorked = parseInt(document.getElementById('daysWorked').value);
+                const dailyRate = parseInt(document.getElementById('dailyRate').value);
+                const deductionAmount = parseInt(document.getElementById('deductionAmount').value);
+
+                payrollList.push({
+                    name,
+                    daysWorked,
+                    dailyRate,
+                    deductionAmount
+                });
+                displayPayrollTable();
+            });
+
+        document.getElementById("deleteEmployee").addEventListener("click",
+            function () {
+                openModal();
+            });
+
+        document.getElementById("confirmDelete").addEventListener("click",
+            function () {
+                const lineNumber = parseInt(document.getElementById('lineNumber').value);
+
+                if (lineNumber >= 1 && lineNumber <= payrollList.length) {
+                    payrollList.splice(lineNumber - 1, 1);
+                    displayPayrollTable();
+                    closeModal();
+                } else {
+                    alert("Invalid line number.");
+                    closeModal();
+                }
+            });
+
+        document.getElementById("cancelDelete").addEventListener("click",
+            function () {
+                closeModal();
+            });
+    </script>
+</body>
+
+</html>
